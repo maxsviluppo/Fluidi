@@ -1,17 +1,19 @@
 
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GeminiService } from './services/gemini.service';
-import { QUESTIONS, Question } from './data/questions';
-import { FluidLabComponent } from './components/fluid-lab.component';
+import { GeminiService } from './services/gemini.service.ts';
+import { QUESTIONS, Question } from './data/questions.ts';
+import { FluidLabComponent } from './components/fluid-lab.component.ts';
 
 @Component({
   selector: 'app-root',
   imports: [CommonModule, FluidLabComponent],
+  providers: [GeminiService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
 <div class="flex min-h-screen bg-slate-50 font-['Plus_Jakarta_Sans'] text-slate-900">
   
-  <!-- SIDEBAR (Tablet & Desktop) -->
+  <!-- SIDEBAR -->
   <aside 
     class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-sm"
     [class.-translate-x-full]="!isSidebarOpen()"
@@ -114,7 +116,6 @@ import { FluidLabComponent } from './components/fluid-lab.component';
                 <button (click)="startQuiz()" class="px-8 py-4 bg-blue-900/40 text-white rounded-2xl font-black border border-white/30 hover:bg-blue-900/60 transition-all backdrop-blur-sm">Simulazione Test (30 Domande)</button>
               </div>
             </div>
-            <!-- Decorative circle -->
             <div class="absolute -right-20 -top-20 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
           </div>
 
@@ -349,7 +350,6 @@ import { FluidLabComponent } from './components/fluid-lab.component';
   `,
   styles: [`
     :host { display: block; }
-    .shadow-glow { box-shadow: 0 0 20px rgba(37, 99, 235, 0.2); }
   `]
 })
 export class AppComponent {
