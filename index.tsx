@@ -5,24 +5,24 @@ import * as core from '@angular/core';
 import { AppComponent } from './src/app.component.ts';
 
 /**
- * Accediamo a provideZonelessChangeDetection in modo dinamico.
- * Questo evita il SyntaxError: "Importing binding name not found" che avviene 
- * quando il bundle ESM del CDN non esporta correttamente il nome statico.
+ * Risolviamo il SyntaxError accedendo dinamicamente al modulo core.
+ * Questo è necessario perché alcune distribuzioni ESM non espongono il nome
+ * come export statico ma solo come proprietà del namespace.
  */
 const coreAny = core as any;
-const zonelessProviderFunc = coreAny.provideZonelessChangeDetection || 
-                             coreAny.provideExperimentalZonelessChangeDetection;
+const provideZoneless = coreAny.provideZonelessChangeDetection || 
+                        coreAny.provideExperimentalZonelessChangeDetection;
 
-if (!zonelessProviderFunc) {
-  throw new Error("Errore Fatale: provideZonelessChangeDetection non trovato. Verifica la versione di Angular.");
+if (!provideZoneless) {
+  console.error("Critical: provideZonelessChangeDetection non trovato.");
 }
 
 bootstrapApplication(AppComponent, {
   providers: [
-    zonelessProviderFunc()
+    provideZoneless ? provideZoneless() : []
   ]
 }).catch(err => {
-  console.error("Errore durante il bootstrap di FluidMed:", err);
+  console.error("Errore fatale durante il bootstrap dell'app:", err);
 });
 
 // AI Studio always uses an `index.tsx` file for all project types.
