@@ -1,0 +1,288 @@
+
+<div class="flex min-h-screen bg-slate-50 font-['Plus_Jakarta_Sans']">
+  
+  <!-- SIDEBAR (Tablet & Desktop) -->
+  <aside 
+    class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0"
+    [class.-translate-x-full]="!isSidebarOpen()"
+  >
+    <div class="h-full flex flex-col p-6">
+      <div class="flex items-center gap-3 mb-10 px-2">
+        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">F</div>
+        <span class="text-xl font-bold text-slate-900 tracking-tight">FluidMed</span>
+      </div>
+
+      <nav class="space-y-2 flex-1">
+        <button 
+          (click)="navigateTo('landing')"
+          class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium"
+          [class]="gameState() === 'landing' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50'"
+        >
+          <span>🏠</span> Dashboard
+        </button>
+        <button 
+          (click)="navigateTo('theory')"
+          class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium"
+          [class]="gameState() === 'theory' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50'"
+        >
+          <span>📖</span> Ripasso Teoria
+        </button>
+        <button 
+          (click)="navigateTo('quiz')"
+          class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium"
+          [class]="gameState() === 'quiz' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50'"
+        >
+          <span>✏️</span> Esercitazione
+        </button>
+      </nav>
+
+      <div class="mt-auto pt-6 border-t border-slate-100">
+        <div class="bg-slate-900 rounded-2xl p-4 text-white">
+          <p class="text-xs text-slate-400 font-bold uppercase mb-1">Status Studente</p>
+          <p class="font-medium">Facoltà Medicina</p>
+          <div class="mt-3 h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-500" [style.width.%]="progress()"></div>
+          </div>
+        </div>
+        <button 
+          (click)="navigateTo('landing')"
+          class="w-full mt-4 flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all font-medium"
+        >
+          <span>🚪</span> Esci dal Corso
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MOBILE OVERLAY -->
+  @if (isSidebarOpen()) {
+    <div 
+      (click)="toggleSidebar()" 
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
+    ></div>
+  }
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    
+    <!-- TOP HEADER (Visible always on Mobile, contextually on Tablet) -->
+    <header class="h-16 flex items-center justify-between px-6 bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
+      <button (click)="toggleSidebar()" class="p-2 lg:hidden text-slate-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+      
+      <div class="hidden lg:block text-sm font-medium text-slate-500">
+        @if (gameState() === 'theory') { Ripasso: Fluidostatica }
+        @else if (gameState() === 'quiz') { Quiz: Domanda {{currentQuestionIndex() + 1}} di {{questions().length}} }
+        @else { Panoramica Iniziale }
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 bg-blue-100 px-3 py-1 rounded-full text-blue-700 text-xs font-bold">
+          <span>🏆</span> {{ score() }} pt
+        </div>
+        <div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+          <img src="https://picsum.photos/32/32" alt="Avatar">
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-8">
+      
+      <!-- LANDING -->
+      @if (gameState() === 'landing') {
+        <div class="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
+          <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-[2.5rem] p-8 md:p-12 text-white relative overflow-hidden shadow-2xl">
+            <div class="relative z-10 max-w-2xl">
+              <h1 class="text-4xl md:text-5xl font-black mb-4">Bentornato, Futuro Medico.</h1>
+              <p class="text-blue-100 text-lg mb-8 opacity-90">Oggi approfondiamo la fisica dei fluidi applicata al corpo umano. Sei pronto per la sfida?</p>
+              <div class="flex gap-4">
+                <button (click)="startTheory()" class="px-6 py-3 bg-white text-blue-700 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-lg">Inizia Teoria</button>
+                <button (click)="startQuiz()" class="px-6 py-3 bg-blue-500 text-white rounded-xl font-bold border border-blue-400/30 hover:bg-blue-400 transition-all shadow-lg">Vai al Test</button>
+              </div>
+            </div>
+            <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-8 bg-white rounded-3xl border border-slate-200 hover:shadow-xl transition-all cursor-pointer group" (click)="navigateTo('theory')">
+              <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">⚖️</div>
+              <h3 class="font-bold text-slate-900 text-lg">Archimede</h3>
+              <p class="text-sm text-slate-500 mt-2">Dalla densità polmonare al galleggiamento dei tessuti.</p>
+            </div>
+            <div class="p-8 bg-white rounded-3xl border border-slate-200 hover:shadow-xl transition-all cursor-pointer group" (click)="navigateTo('theory')">
+              <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🌡️</div>
+              <h3 class="font-bold text-slate-900 text-lg">Stevino</h3>
+              <p class="text-sm text-slate-500 mt-2">Pressione arteriosa, flebo e gradienti gravitazionali.</p>
+            </div>
+            <div class="p-8 bg-white rounded-3xl border border-slate-200 hover:shadow-xl transition-all cursor-pointer group" (click)="navigateTo('quiz')">
+              <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">⚡</div>
+              <h3 class="font-bold text-slate-900 text-lg">Esercitazione</h3>
+              <p class="text-sm text-slate-500 mt-2">30 domande di alto livello con feedback AI istantaneo.</p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- THEORY -->
+      @if (gameState() === 'theory') {
+        <div class="max-w-4xl mx-auto animate-in slide-in-from-bottom duration-500">
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-black text-slate-900 italic">Modulo 1: Fluidostatica</h2>
+            <button (click)="navigateTo('landing')" class="px-4 py-2 text-slate-500 font-bold hover:text-slate-900 flex items-center gap-2">
+              Esci ✕
+            </button>
+          </div>
+          
+          <div class="bg-white rounded-[2rem] p-10 shadow-sm border border-slate-100 space-y-10">
+            <section class="prose prose-slate">
+              <h3 class="text-2xl font-bold text-blue-600">1. Legge di Stevino</h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Ogni fluido esercita una pressione che dipende dalla densità, dalla gravità e dalla profondità. 
+                <span class="block bg-slate-50 p-4 rounded-xl border-l-4 border-blue-500 my-4 font-mono text-xl">P = P0 + ρgh</span>
+                <strong>Esempio Medico:</strong> La pressione sanguigna misurata alla caviglia di un paziente in piedi è molto superiore a quella misurata al braccio.
+              </p>
+            </section>
+            
+            <app-fluid-lab subtopic="Stevin"></app-fluid-lab>
+
+            <section class="prose prose-slate">
+              <h3 class="text-2xl font-bold text-amber-600">2. Spinta di Archimede</h3>
+              <p class="text-slate-600 text-lg leading-relaxed">
+                Un corpo immerso riceve una spinta pari al peso del volume spostato.
+                <strong>Esempio Medico:</strong> In medicina legale, la docimasia polmonare sfrutta Archimede per capire se un neonato ha effettuato il primo respiro.
+              </p>
+            </section>
+          </div>
+
+          <div class="mt-8 flex justify-center">
+            <button (click)="startQuiz()" class="px-10 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl">
+              Inizia Verifica Competenze
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- QUIZ -->
+      @if (gameState() === 'quiz') {
+        <div class="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-12 gap-8 animate-in fade-in duration-500">
+          
+          <!-- Left: Lab & Sidebar Info (Fixed on XL) -->
+          <div class="xl:col-span-4 space-y-6 order-2 xl:order-1">
+            <div class="sticky top-24">
+              <app-fluid-lab [subtopic]="currentQuestion().subtopic"></app-fluid-lab>
+              
+              <div class="mt-6 p-6 bg-white rounded-3xl border border-slate-200">
+                <h4 class="font-bold text-slate-900 mb-2 italic">Promemoria Rapido</h4>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  @if (currentQuestion().subtopic === 'Stevin') { 
+                    La pressione aumenta con la colonna d'acqua sovrastante. 1 mmHg ≈ 133.3 Pa.
+                  } @else if (currentQuestion().subtopic === 'Archimede') {
+                    Se la spinta S > P (Peso), il corpo galleggia. La spinta dipende solo dal volume immerso.
+                  } @else {
+                    L'equazione di Bernoulli: dove la velocità sale, la pressione scende.
+                  }
+                </p>
+              </div>
+
+              <button (click)="navigateTo('landing')" class="w-full mt-6 py-3 border-2 border-slate-200 text-slate-400 rounded-xl font-bold hover:border-red-200 hover:text-red-500 transition-all">
+                Interrompi Test
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Questions -->
+          <div class="xl:col-span-8 space-y-6 order-1 xl:order-2">
+            <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
+              <div class="flex items-center justify-between mb-8">
+                <span class="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-xs font-black uppercase tracking-tighter">
+                  {{ currentQuestion().subtopic }}
+                </span>
+                <div class="h-1.5 w-32 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full bg-blue-600 transition-all duration-500" [style.width.%]="progress()"></div>
+                </div>
+              </div>
+
+              <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight mb-8">
+                {{ currentQuestion().question }}
+              </h2>
+
+              <div class="grid grid-cols-1 gap-4">
+                @for (option of currentQuestion().options; track $index) {
+                  <button 
+                    (click)="selectOption($index)"
+                    [disabled]="hasAnswered()"
+                    class="group relative p-5 md:p-6 text-left border-2 rounded-2xl transition-all duration-300"
+                    [class.border-slate-100]="!hasAnswered() || (selectedOption() !== $index && currentQuestion().correctAnswer !== $index)"
+                    [class.hover:border-blue-300]="!hasAnswered()"
+                    [class.border-green-500]="hasAnswered() && currentQuestion().correctAnswer === $index"
+                    [class.bg-green-50]="hasAnswered() && currentQuestion().correctAnswer === $index"
+                    [class.border-red-500]="hasAnswered() && selectedOption() === $index && currentQuestion().correctAnswer !== $index"
+                    [class.bg-red-50]="hasAnswered() && selectedOption() === $index && currentQuestion().correctAnswer !== $index"
+                  >
+                    <div class="flex items-center justify-between font-medium">
+                      <span class="pr-4">{{ option }}</span>
+                      @if (hasAnswered() && currentQuestion().correctAnswer === $index) { <span class="text-green-600">✓</span> }
+                    </div>
+                  </button>
+                }
+              </div>
+
+              @if (hasAnswered()) {
+                <div class="mt-8 p-8 rounded-3xl bg-slate-50 border-2 border-slate-100 animate-in slide-in-from-top-4">
+                  <div class="flex items-center gap-3 mb-4">
+                    <span class="text-3xl">🩺</span>
+                    <h4 class="font-black text-slate-900 uppercase text-sm tracking-widest">Analisi Clinica AI</h4>
+                  </div>
+                  
+                  @if (loadingAi()) {
+                    <div class="flex items-center gap-3 text-slate-400 italic text-sm">
+                      <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      Il professore sta analizzando la tua risposta...
+                    </div>
+                  } @else {
+                    <p class="text-slate-700 leading-relaxed text-lg italic font-serif">"{{ aiExplanation() }}"</p>
+                  }
+
+                  <button 
+                    (click)="nextQuestion()"
+                    class="w-full mt-8 py-5 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 transition-all shadow-xl active:scale-95"
+                  >
+                    {{ currentQuestionIndex() === questions().length - 1 ? 'Vedi Risultati Finali' : 'Prossimo Quesito' }}
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- RESULT -->
+      @if (gameState() === 'result') {
+        <div class="max-w-3xl mx-auto text-center py-20 animate-in zoom-in-95 duration-700">
+          <div class="inline-block p-6 rounded-[2.5rem] bg-white shadow-2xl mb-12">
+            <div class="text-7xl mb-4">🩺</div>
+            <h2 class="text-4xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Certificazione Completa</h2>
+            <p class="text-slate-500 text-lg">Hai completato il modulo di fisica dei fluidi.</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-6 mb-12">
+            <div class="p-8 bg-white rounded-3xl border border-slate-100 shadow-sm">
+              <div class="text-4xl font-black text-blue-600 mb-1">{{ score() }} / {{ questions().length }}</div>
+              <div class="text-xs font-bold text-slate-400 uppercase">Risposte Esatte</div>
+            </div>
+            <div class="p-8 bg-white rounded-3xl border border-slate-100 shadow-sm">
+              <div class="text-4xl font-black text-emerald-500 mb-1">{{ (score() / questions().length * 100).toFixed(0) }}%</div>
+              <div class="text-xs font-bold text-slate-400 uppercase">Percentuale Successo</div>
+            </div>
+          </div>
+
+          <button (click)="navigateTo('landing')" class="px-12 py-5 bg-slate-900 text-white rounded-2xl font-black text-xl hover:bg-slate-800 transition-all shadow-2xl">
+            Ricomincia Percorso
+          </button>
+        </div>
+      }
+    </div>
+  </main>
+</div>
