@@ -25,8 +25,8 @@
     "rxjs/operators": "https://esm.sh/rxjs@7.8.1/operators",
     "@angular/core": "https://esm.sh/@angular/core@19.1.5",
     "@angular/compiler": "https://esm.sh/@angular/compiler@19.1.5",
-    "@angular/common": "https://esm.sh/@angular/common@19.1.5",
-    "@angular/platform-browser": "https://esm.sh/@angular/platform-browser@19.1.5",
+    "@angular/common": "https://esm.sh/@angular/common@19.1.5?deps=@angular/core@19.1.5",
+    "@angular/platform-browser": "https://esm.sh/@angular/platform-browser@19.1.5?deps=@angular/core@19.1.5",
     "@google/genai": "https://esm.sh/@google/genai@1.40.0"
   }
 }
@@ -37,7 +37,10 @@
     <div class="flex items-center justify-center min-h-screen">
       <div class="flex flex-col items-center gap-4">
         <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p id="loading-text" class="text-slate-400 font-bold animate-pulse tracking-tight text-sm">Inizializzazione FluidMed...</p>
+        <p id="loading-text" class="text-slate-400 font-bold animate-pulse tracking-tight text-sm text-center">
+          Inizializzazione FluidMed...<br>
+          <span class="font-normal text-[10px] opacity-50">Configurazione ambiente in corso</span>
+        </p>
       </div>
     </div>
   </app-root>

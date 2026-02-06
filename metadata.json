@@ -1,8 +1,5 @@
 {
   "name": "FluidMed: Fisica dei Fluidi per Medicina",
   "description": "Una piattaforma educativa interattiva e gamificata per studenti di medicina del primo anno, dedicata alla fluidostatica e fluidodinamica con simulazioni digitali e tutoraggio AI.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
+  "requestFramePermissions": []
 }
