@@ -45,8 +45,14 @@
   }
 }
 </script>
+<script>
+  // Previene il crash se l'SDK cerca process.env prima che il bundler lo sostituisca
+  window.process = { env: { API_KEY: "" } };
+</script>
 </head>
 <body class="gradient-bg">
   <app-root></app-root>
+  <!-- Caricamento dell'applicazione -->
+  <script type="module" src="index.tsx"></script>
 </body>
 </html>
