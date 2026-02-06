@@ -19,6 +19,6 @@
     "typescript": "~5.9.2"
   },
   "scripts": {
-    "build": "echo 'Building static assets...'"
+    "build": "true"
   }
 }
