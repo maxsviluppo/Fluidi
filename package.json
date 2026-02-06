@@ -19,6 +19,6 @@
     "typescript": "~5.9.2"
   },
   "scripts": {
-    "build": "true"
+    "build": "mkdir -p dist && cp index.html index.tsx metadata.json dist/ && cp -r src dist/"
   }
 }

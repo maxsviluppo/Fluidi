@@ -1,6 +1,6 @@
 
 {
-  "outputDirectory": ".",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [
     {

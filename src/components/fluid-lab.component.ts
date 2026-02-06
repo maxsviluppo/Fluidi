@@ -30,7 +30,6 @@ import { CommonModule } from '@angular/common';
 
         <!-- SIMULAZIONE STEVIN: Sonda Mobile -->
         @if (subtopic() === 'Stevin') {
-          <!-- Sonda trascinabile (simulata da slider) -->
           <div 
             class="absolute left-1/2 -translate-x-1/2 w-0.5 bg-slate-500 transition-all duration-300"
             [style.height.%]="interactiveDepth()"
@@ -68,7 +67,6 @@ import { CommonModule } from '@angular/common';
         @if (subtopic() === 'Fluidodinamica') {
           <div class="absolute inset-0 flex items-center px-2">
              <div class="w-full flex items-center justify-between gap-0 h-16 bg-blue-900/20 border-y-2 border-blue-400/30 relative">
-                <!-- Particelle di sangue -->
                 @for (p of particles(); track $index) {
                   <div 
                     class="absolute w-2 h-2 bg-red-500/60 rounded-full blur-[1px]"
@@ -77,7 +75,6 @@ import { CommonModule } from '@angular/common';
                     [style.transition]="'left ' + (100 / flowSpeed()) + 'ms linear'"
                   ></div>
                 }
-                <!-- Area di Stenosi -->
                 <div 
                   class="absolute left-1/2 -translate-x-1/2 w-16 bg-slate-900/80 transition-all duration-500"
                   [style.height.%]="stenosisLevel()"
@@ -96,15 +93,28 @@ import { CommonModule } from '@angular/common';
       <!-- CONTROLLI INTERATTIVI -->
       <div class="w-full mt-6 bg-white/5 rounded-2xl p-4 border border-white/10 space-y-4">
         @if (subtopic() === 'Stevin') {
-          <div class="space-y-2">
+          <div class="space-y-3">
             <div class="flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-              <span>Profondità Sonda</span>
+              <span>Profondità Sonda (h)</span>
               <span class="text-blue-400">{{ interactiveDepth() }}%</span>
             </div>
             <input type="range" min="5" max="95" [value]="interactiveDepth()" 
               (input)="updateDepth($event)"
               class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
-            <p class="text-[10px] text-slate-500 italic">Sposta la sonda per vedere come la pressione aumenta con h.</p>
+            
+            <!-- EXPLANATION BOX (New Component for Stevin) -->
+            <div class="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-blue-400 text-xs">🩺</span>
+                <h4 class="text-[10px] font-black text-blue-400 uppercase tracking-tighter">Correlazione Clinica</h4>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-tight">
+                {{ stevinAnalysis().text }}
+              </p>
+              <div class="mt-2 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500 transition-all duration-500" [style.width.%]="interactiveDepth()"></div>
+              </div>
+            </div>
           </div>
         }
 
@@ -157,9 +167,28 @@ export class FluidLabComponent {
   // Stati Stevin
   interactiveDepth = signal(20);
   calculatedPressure = computed(() => {
-    // P = P0 + rho*g*h. Simuliamo una scala medica.
     const h = this.interactiveDepth();
-    return Math.round(80 + (h * 0.8)); // Base 80 mmHg + incremento
+    return Math.round(80 + (h * 0.8)); // Base 80 mmHg (pressione media) + incremento idrostatico
+  });
+
+  stevinAnalysis = computed(() => {
+    const h = this.interactiveDepth();
+    if (h > 70) {
+      return {
+        text: "Pressione Venosa Alta (Arti Inferiori): La colonna di sangue (h) genera una pressione elevata. Se eccessiva, favorisce l'uscita di liquidi dai capillari, causando l'EDEMA declive.",
+        status: 'danger'
+      };
+    } else if (h > 30) {
+      return {
+        text: "Pressione Media (Tronco): Gradiente pressorio bilanciato. Il ritorno venoso è garantito dalle valvole e dalla pompa muscolare che contrastano la gravità.",
+        status: 'normal'
+      };
+    } else {
+      return {
+        text: "Pressione Bassa (Vicina al Cuore): La pressione idrostatica è minima. Simula la pressione atriale, facilitando il riempimento delle cavità cardiache.",
+        status: 'safe'
+      };
+    }
   });
 
   // Stati Archimede
@@ -173,7 +202,6 @@ export class FluidLabComponent {
   particles = signal(Array.from({length: 8}, (_, i) => ({pos: i * 15, top: 20 + Math.random() * 60})));
 
   constructor() {
-    // Animazione particelle per fluidodinamica
     effect((onCleanup) => {
       if (this.subtopic() === 'Fluidodinamica') {
         const interval = setInterval(() => {
