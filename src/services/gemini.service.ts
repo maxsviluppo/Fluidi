@@ -6,19 +6,18 @@ import { GoogleGenAI } from "@google/genai";
   providedIn: 'root'
 })
 export class GeminiService {
-  private ai = new GoogleGenAI({ apiKey: (window as any).process?.env?.API_KEY || '' });
+  private ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   async getDetailedExplanation(topic: string, question: string, selectedAnswer: string, isCorrect: boolean): Promise<string> {
     const prompt = `
-      Agisci come un professore di Fisica Medica per studenti del primo anno di Medicina (20-25 anni).
+      Agisci come un professore di Fisica Medica.
       Argomento: ${topic}.
       Domanda: ${question}.
       L'utente ha risposto: "${selectedAnswer}". 
-      Risultato: ${isCorrect ? 'Corretto' : 'Sbagliato'}.
+      Esito: ${isCorrect ? 'Corretto' : 'Errato'}.
       
-      Spiega in modo dettagliato ma accessibile i principi fisici coinvolti (Stevino o Archimede). 
-      Collega la spiegazione ad un esempio pratico in ambito medico (es. pressione sanguigna, flebo, edema, galleggiamento di organi).
-      Usa un tono incoraggiante e scientificamente rigoroso. Massimo 150 parole.
+      Spiega il principio fisico in modo conciso e applicalo alla clinica medica (es. emodinamica, flebo, edema). 
+      Massimo 80 parole. Usa un linguaggio moderno per studenti di medicina.
     `;
 
     try {
@@ -26,13 +25,13 @@ export class GeminiService {
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
-          thinkingConfig: { thinkingBudget: 0 } // Low latency for fast feedback
+          thinkingConfig: { thinkingBudget: 0 }
         }
       });
       return response.text;
     } catch (error) {
       console.error('Gemini API Error:', error);
-      return "Spiacente, non ho potuto caricare la spiegazione dettagliata in questo momento. Ricorda che la legge di Stevino descrive come la pressione aumenta con la profondità, mentre Archimede spiega la spinta idrostatica.";
+      return "Il principio di Stevino afferma che la pressione aumenta con la profondità. In clinica, questo spiega perché monitoriamo attentamente la posizione del paziente durante la misurazione della pressione arteriosa.";
     }
   }
 }

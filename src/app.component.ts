@@ -44,26 +44,24 @@ import { FluidLabComponent } from './components/fluid-lab.component.ts';
           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold"
           [class]="gameState() === 'quiz' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50'"
         >
-          <span class="text-lg">✏️</span> Esercitazione (30 Q)
+          <span class="text-lg">✏️</span> Quiz (30 Quesiti)
         </button>
       </nav>
 
       <div class="mt-auto pt-6 border-t border-slate-100">
-        <div class="bg-slate-900 rounded-2xl p-4 text-white shadow-xl">
-          <p class="text-[10px] text-slate-400 font-black uppercase mb-2 tracking-widest">Progressi Studio</p>
-          <div class="flex justify-between items-end mb-2">
-             <p class="font-bold text-sm">Medicina Anno I</p>
-             <p class="text-xs text-blue-400 font-mono">{{ (score() / questions().length * 100).toFixed(0) }}%</p>
-          </div>
+        <div class="bg-slate-900 rounded-2xl p-4 text-white shadow-xl mb-4">
+          <p class="text-[10px] text-slate-400 font-black uppercase mb-2 tracking-widest text-center">Progresso Modulo</p>
           <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
             <div class="h-full bg-blue-500 transition-all duration-1000" [style.width.%]="progress()"></div>
           </div>
         </div>
+        
+        <!-- VOCE RIPRISTINATA: ESCI -->
         <button 
           (click)="navigateTo('landing')"
-          class="w-full mt-4 flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all font-bold text-sm"
+          class="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all font-bold"
         >
-          <span>🚪</span> ESCI DAL MODULO
+          <span class="text-lg">🚪</span> Esci dal Corso
         </button>
       </div>
     </div>
@@ -74,342 +72,178 @@ import { FluidLabComponent } from './components/fluid-lab.component.ts';
     <div (click)="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"></div>
   }
 
-  <!-- MAIN CONTENT AREA -->
+  <!-- MAIN CONTENT -->
   <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-    
-    <!-- TOP HEADER -->
     <header class="h-16 flex items-center justify-between px-6 bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
+      <button (click)="toggleSidebar()" class="p-2 lg:hidden text-slate-600 hover:bg-slate-100 rounded-lg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
       <div class="flex items-center gap-4">
-        <button (click)="toggleSidebar()" class="p-2 lg:hidden text-slate-600 hover:bg-slate-100 rounded-lg">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        </button>
-        <div class="text-sm font-bold text-slate-500 uppercase tracking-tighter">
-          @if (gameState() === 'theory') { Focus: Fluidostatica Medica }
-          @else if (gameState() === 'quiz') { Sessione Esame: Quesito {{currentQuestionIndex() + 1}}/30 }
-          @else { Pannello di Controllo }
-        </div>
-      </div>
-
-      <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2 bg-blue-100 px-4 py-1.5 rounded-full text-blue-700 text-xs font-black">
-          <span class="animate-pulse">💎</span> {{ score() * 10 }} XP
-        </div>
-        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 border-2 border-white shadow-sm flex items-center justify-center text-white text-xs font-bold">
-          DR
-        </div>
+        <div class="text-xs font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full">{{ score() }} / 30 CORRETTE</div>
       </div>
     </header>
 
-    <!-- CONTENT -->
     <div class="flex-1 overflow-y-auto p-4 md:p-10">
-      
-      <!-- LANDING -->
       @if (gameState() === 'landing') {
-        <div class="max-w-5xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div class="bg-gradient-to-br from-indigo-700 via-blue-600 to-blue-500 rounded-[3rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl">
-            <div class="relative z-10 max-w-2xl">
-              <span class="inline-block px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-black mb-6 tracking-widest uppercase">Target 20-25 Anni | Medicina</span>
-              <h1 class="text-5xl md:text-6xl font-black mb-6 leading-[1.1] tracking-tighter">Domina la Fisica dei Fluidi.</h1>
-              <p class="text-blue-50 text-xl mb-10 opacity-90 font-medium max-w-lg">Preparazione intensiva per il test di Medicina e l'esame di Fisica Medica con simulazioni 3D e tutoraggio AI.</p>
+        <div class="max-w-5xl mx-auto space-y-12 py-10">
+          <!-- HERO -->
+          <div class="bg-blue-600 rounded-[3rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
+            <div class="relative z-10">
+              <h1 class="text-4xl md:text-5xl font-black mb-6 tracking-tighter leading-none">Fisica Medica: Fluidi.</h1>
+              <p class="text-blue-100 text-lg md:text-xl mb-10 max-w-lg">Preparazione mirata per il primo anno di Medicina con tutoraggio AI basato su Gemini 2.5 Flash.</p>
               <div class="flex flex-wrap gap-4">
-                <button (click)="startTheory()" class="px-8 py-4 bg-white text-blue-700 rounded-2xl font-black hover:scale-105 transition-all shadow-xl shadow-blue-900/20 active:scale-95">Inizia Ripasso</button>
-                <button (click)="startQuiz()" class="px-8 py-4 bg-blue-900/40 text-white rounded-2xl font-black border border-white/30 hover:bg-blue-900/60 transition-all backdrop-blur-sm">Simulazione Test (30 Domande)</button>
+                <button (click)="startTheory()" class="px-8 py-4 bg-white text-blue-600 rounded-2xl font-bold shadow-lg hover:scale-105 transition-all">Inizia Teoria</button>
+                <button (click)="startQuiz()" class="px-8 py-4 bg-blue-900/40 text-white rounded-2xl font-bold border border-white/20 hover:bg-blue-900/60 transition-all">Test 30 Quesiti</button>
               </div>
             </div>
-            <div class="absolute -right-20 -top-20 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="group p-8 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer" (click)="navigateTo('theory')">
-              <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-amber-100 transition-colors">⚓</div>
-              <h3 class="font-black text-slate-900 text-xl tracking-tight">Statica Clinica</h3>
-              <p class="text-slate-500 mt-3 leading-relaxed">Archimede e Stevino applicati alla docimasia e pressione venosa.</p>
+          <!-- 3-CARD LAYOUT RIPRISTINATO -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-8 bg-white rounded-3xl border border-slate-200 hover:shadow-xl transition-all cursor-pointer group" (click)="startTheory()">
+              <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">⚖️</div>
+              <h3 class="font-bold text-xl text-slate-900">Archimede</h3>
+              <p class="text-slate-500 text-sm mt-2">Dalla densità polmonare al galleggiamento dei tessuti nel corpo umano.</p>
             </div>
-            <div class="group p-8 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer" (click)="navigateTo('theory')">
-              <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-blue-100 transition-colors">💓</div>
-              <h3 class="font-black text-slate-900 text-xl tracking-tight">Emodinamica</h3>
-              <p class="text-slate-500 mt-3 leading-relaxed">Bernoulli, Poiseuille e la viscosità del sangue in circolo.</p>
+            
+            <div class="p-8 bg-white rounded-3xl border border-slate-200 hover:shadow-xl transition-all cursor-pointer group" (click)="startTheory()">
+              <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">🌡️</div>
+              <h3 class="font-bold text-xl text-slate-900">Statica e Stevino</h3>
+              <p class="text-slate-500 text-sm mt-2">Pressione arteriosa, flebo e gradienti gravitazionali nell'emodinamica.</p>
             </div>
-            <div class="group p-8 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer" (click)="navigateTo('quiz')">
-              <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-emerald-100 transition-colors">📈</div>
-              <h3 class="font-black text-slate-900 text-xl tracking-tight">Quiz 30 Quesiti</h3>
-              <p class="text-slate-500 mt-3 leading-relaxed">Verifica completa con spiegazioni dettagliate generate dall'AI.</p>
+
+            <div class="p-8 bg-white rounded-3xl border border-slate-200 hover:shadow-xl transition-all cursor-pointer group" (click)="startQuiz()">
+              <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">🧠</div>
+              <h3 class="font-bold text-xl text-slate-900">Simulazione Esame</h3>
+              <p class="text-slate-500 text-sm mt-2">30 quesiti selezionati con feedback AI in tempo reale per la tua preparazione.</p>
             </div>
           </div>
         </div>
       }
 
-      <!-- THEORY SECTION -->
       @if (gameState() === 'theory') {
-        <div class="max-w-4xl mx-auto animate-in slide-in-from-bottom-8 duration-700">
-          <div class="flex items-center justify-between mb-10">
-            <h2 class="text-4xl font-black text-slate-900 tracking-tighter">Modulo 1: Fondamenti dei Fluidi</h2>
-            <button (click)="navigateTo('landing')" class="p-3 bg-white border border-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-all text-slate-500 hover:text-red-500">
-              Chiudi ✕
-            </button>
+        <div class="max-w-4xl mx-auto space-y-8 animate-in slide-in-from-bottom duration-500">
+          <h2 class="text-4xl font-black tracking-tighter">Modulo Teorico</h2>
+          <div class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm space-y-10">
+             <section class="prose prose-slate">
+                <h3 class="text-2xl font-bold text-blue-600">Principio di Stevino</h3>
+                <p class="text-slate-600 leading-relaxed text-lg">In un fluido ideale la pressione aumenta con la profondità: <span class="font-mono bg-slate-100 px-2 py-1 rounded">P = P0 + ρgh</span>. Fondamentale per capire perché la pressione arteriosa cambia tra cuore e piedi.</p>
+                <app-fluid-lab subtopic="Stevin"></app-fluid-lab>
+             </section>
           </div>
-          
-          <div class="space-y-8">
-            <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
-               <h3 class="text-2xl font-black text-blue-600 mb-6 flex items-center gap-3">
-                 <span class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-sm">1</span>
-                 La Legge di Stevino
-               </h3>
-               <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-                 <div class="prose prose-slate">
-                   <p class="text-slate-600 text-lg leading-relaxed">
-                     In un fluido ideale in equilibrio, la pressione aumenta linearmente con la profondità. Questo principio è cruciale per comprendere la <strong>circolazione gravitazionale</strong>.
-                   </p>
-                   <div class="bg-slate-50 p-6 rounded-2xl border-l-4 border-blue-500 my-6">
-                      <code class="text-2xl font-black text-blue-800">P = P₀ + ρgh</code>
-                   </div>
-                   <p class="text-sm text-slate-500 italic">
-                     Esempio: Una flebo deve essere sollevata rispetto al paziente per generare una pressione idrostatica (ρgh) superiore alla pressione venosa.
-                   </p>
-                 </div>
-                 <app-fluid-lab subtopic="Stevin"></app-fluid-lab>
-               </div>
-            </div>
-
-            <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
-               <h3 class="text-2xl font-black text-amber-600 mb-6 flex items-center gap-3">
-                 <span class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-sm">2</span>
-                 Spinta di Archimede
-               </h3>
-               <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-                  <div class="prose prose-slate">
-                    <p class="text-slate-600 text-lg leading-relaxed">
-                      Ogni corpo immerso in un fluido riceve una spinta verso l'alto pari al peso del volume di fluido spostato.
-                    </p>
-                    <div class="bg-amber-50 p-6 rounded-2xl border-l-4 border-amber-500 my-6">
-                      <code class="text-2xl font-black text-amber-800">S = ρ_fluido · V_imm · g</code>
-                    </div>
-                    <p class="text-sm text-slate-500 italic">
-                      Applicazione: La docimasia polmonare per verificare la respirazione neonatale tramite galleggiamento in acqua.
-                    </p>
-                  </div>
-                  <app-fluid-lab subtopic="Archimede"></app-fluid-lab>
-               </div>
-            </div>
-          </div>
-
-          <div class="mt-12 text-center pb-20">
-            <button (click)="startQuiz()" class="px-12 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-xl hover:bg-blue-600 transition-all shadow-2xl hover:scale-105 active:scale-95">
-              Mettiti alla prova (30 Domande)
-            </button>
-          </div>
+          <button (click)="startQuiz()" class="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-xl hover:bg-blue-600 transition-all shadow-xl">Passa al Quiz di Verifica</button>
         </div>
       }
 
-      <!-- QUIZ SECTION -->
       @if (gameState() === 'quiz') {
-        <div class="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-12 gap-10 animate-in fade-in duration-500">
-          
-          <!-- LEFT: VISUAL LAB -->
-          <div class="xl:col-span-4 order-2 xl:order-1 space-y-6">
-            <div class="sticky top-24">
-              <app-fluid-lab [subtopic]="currentQuestion().subtopic"></app-fluid-lab>
-              
-              <div class="mt-6 p-6 bg-white rounded-3xl border border-slate-200 shadow-sm">
-                <h4 class="font-black text-slate-900 text-sm uppercase tracking-widest mb-3 italic">Clinical Hint</h4>
-                <p class="text-xs text-slate-500 leading-relaxed font-medium">
-                  @if (currentQuestion().subtopic === 'Stevin') { 
-                    Considera sempre il dislivello 'h'. In medicina, 'h' può essere la distanza tra cuore e piedi in un paziente eretto.
-                  } @else if (currentQuestion().subtopic === 'Archimede') {
-                    Il volume spostato è la chiave. Densità acqua ≈ 1 g/cm³.
-                  } @else {
-                    Bernoulli: Velocità ↑ Pressione ↓. Poiseuille: Raggio vasi ⁴ (potenza quarta!).
-                  }
-                </p>
-              </div>
-
-              <button (click)="navigateTo('landing')" class="w-full mt-6 py-4 border-2 border-slate-200 text-slate-400 rounded-2xl font-bold hover:bg-red-50 hover:border-red-100 hover:text-red-500 transition-all text-sm uppercase">
-                Annulla Esercitazione
-              </button>
-            </div>
+        <div class="max-w-5xl mx-auto grid grid-cols-1 xl:grid-cols-12 gap-10">
+          <div class="xl:col-span-4 space-y-6 order-2 xl:order-1">
+             <app-fluid-lab [subtopic]="currentQuestion().subtopic"></app-fluid-lab>
           </div>
-
-          <!-- RIGHT: QUESTION & ANSWERS -->
           <div class="xl:col-span-8 order-1 xl:order-2 space-y-6">
-            <div class="bg-white rounded-[3rem] p-10 shadow-xl border border-slate-100">
-              <div class="flex items-center justify-between mb-10">
-                <div class="flex items-center gap-3">
-                  <span class="px-4 py-1.5 bg-blue-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest">
-                    {{ currentQuestion().subtopic }}
-                  </span>
-                  <span class="text-slate-400 font-bold text-xs">QUESITO {{currentQuestionIndex() + 1}}/30</span>
-                </div>
-                <div class="h-2 w-32 bg-slate-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-blue-600 transition-all duration-700" [style.width.%]="progress()"></div>
-                </div>
-              </div>
-
-              <h2 class="text-3xl md:text-4xl font-black text-slate-900 leading-[1.15] mb-10 tracking-tight">
-                {{ currentQuestion().question }}
-              </h2>
-
-              <div class="grid grid-cols-1 gap-4">
-                @for (option of currentQuestion().options; track $index) {
-                  <button 
+            <div class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl border border-slate-100">
+               <div class="mb-8 flex justify-between items-center">
+                 <span class="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 px-3 py-1 rounded-full">DOMANDA {{currentQuestionIndex() + 1}} / 30</span>
+                 <div class="w-24 h-1 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-500" [style.width.%]="progress()"></div>
+                 </div>
+               </div>
+               <h2 class="text-3xl font-bold mb-10 leading-tight">{{ currentQuestion().question }}</h2>
+               <div class="grid gap-4">
+                 @for (opt of currentQuestion().options; track $index) {
+                   <button 
                     (click)="selectOption($index)"
                     [disabled]="hasAnswered()"
-                    class="group relative p-6 text-left border-2 rounded-[1.5rem] transition-all duration-300"
-                    [class.border-slate-100]="!hasAnswered() || (selectedOption() !== $index && currentQuestion().correctAnswer !== $index)"
-                    [class.hover:border-blue-400]="!hasAnswered()"
-                    [class.hover:bg-blue-50]="!hasAnswered()"
+                    class="p-6 text-left border-2 rounded-2xl transition-all font-medium"
+                    [class.border-slate-100]="!hasAnswered()"
                     [class.border-green-500]="hasAnswered() && currentQuestion().correctAnswer === $index"
                     [class.bg-green-50]="hasAnswered() && currentQuestion().correctAnswer === $index"
                     [class.border-red-500]="hasAnswered() && selectedOption() === $index && currentQuestion().correctAnswer !== $index"
-                    [class.bg-red-50]="hasAnswered() && selectedOption() === $index && currentQuestion().correctAnswer !== $index"
-                  >
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 font-black group-hover:bg-white transition-colors">
-                           {{ ['A', 'B', 'C', 'D'][$index] }}
-                        </div>
-                        <span class="font-bold text-slate-700 pr-4 leading-tight">{{ option }}</span>
-                      </div>
-                      @if (hasAnswered() && currentQuestion().correctAnswer === $index) { 
-                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg">✓</div>
-                      }
-                    </div>
-                  </button>
-                }
-              </div>
+                   >
+                     {{ opt }}
+                   </button>
+                 }
+               </div>
 
-              @if (hasAnswered()) {
-                <div class="mt-10 p-10 rounded-[2.5rem] bg-slate-900 text-white shadow-2xl animate-in slide-in-from-top-6 duration-500 relative overflow-hidden">
-                  <div class="relative z-10">
-                    <div class="flex items-center gap-3 mb-6">
-                      <span class="text-3xl">🤖</span>
-                      <h4 class="font-black uppercase text-sm tracking-[0.2em] text-blue-400">Analisi Gemini AI</h4>
+               @if (hasAnswered()) {
+                 <div class="mt-8 p-8 bg-slate-900 rounded-3xl text-white animate-in zoom-in-95 duration-300">
+                    <div class="flex items-center gap-2 mb-4">
+                      <span class="text-2xl">🪄</span>
+                      <span class="text-xs font-black uppercase tracking-widest text-blue-400">Tutor Gemini Flash</span>
                     </div>
-                    
                     @if (loadingAi()) {
-                      <div class="flex items-center gap-4 text-slate-300 italic font-medium">
-                        <div class="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                        Il tuo tutor sta elaborando la correzione clinica...
+                      <div class="flex items-center gap-3 text-slate-400 italic">
+                        <div class="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                        Analisi clinica in corso...
                       </div>
                     } @else {
-                      <p class="text-xl leading-relaxed font-serif italic text-blue-50">"{{ aiExplanation() }}"</p>
+                      <p class="text-lg leading-relaxed font-serif italic">"{{ aiExplanation() }}"</p>
                     }
-
-                    <button 
-                      (click)="nextQuestion()"
-                      class="w-full mt-10 py-5 bg-white text-slate-900 rounded-2xl font-black text-lg hover:bg-blue-500 hover:text-white transition-all shadow-xl active:scale-95"
-                    >
-                      {{ currentQuestionIndex() === questions().length - 1 ? 'Vedi Report Finale' : 'Prossimo Quesito' }}
-                    </button>
-                  </div>
-                  <!-- Background Glow -->
-                  <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
-                </div>
-              }
+                    <button (click)="nextQuestion()" class="w-full mt-8 py-4 bg-white text-slate-900 rounded-xl font-black hover:bg-blue-400 hover:text-white transition-all shadow-lg">Continua</button>
+                 </div>
+               }
             </div>
           </div>
         </div>
       }
 
-      <!-- RESULT SCREEN -->
       @if (gameState() === 'result') {
-        <div class="max-w-4xl mx-auto text-center py-20 animate-in zoom-in-95 duration-1000">
-          <div class="inline-block p-10 rounded-[4rem] bg-white shadow-2xl mb-12 border border-slate-50">
-            <div class="text-8xl mb-8">🩺</div>
-            <h2 class="text-5xl font-black text-slate-900 mb-4 tracking-tighter uppercase">Modulo Superato</h2>
-            <p class="text-slate-500 text-xl font-medium">Hai dimostrato ottime basi di fisica medica applicata.</p>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 px-10">
-            <div class="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
-              <div class="text-5xl font-black text-blue-600 mb-2">{{ score() }}</div>
-              <div class="text-xs font-black text-slate-400 uppercase tracking-widest">Risposte Esatte</div>
-            </div>
-            <div class="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
-              <div class="text-5xl font-black text-indigo-500 mb-2">{{ (score() / questions().length * 100).toFixed(0) }}%</div>
-              <div class="text-xs font-black text-slate-400 uppercase tracking-widest">Precisione</div>
-            </div>
-            <div class="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm">
-              <div class="text-5xl font-black text-emerald-500 mb-2">{{ score() * 10 }}</div>
-              <div class="text-xs font-black text-slate-400 uppercase tracking-widest">XP Guadagnati</div>
-            </div>
-          </div>
-
-          <div class="flex flex-col md:flex-row gap-6 justify-center items-center px-10">
-             <button (click)="navigateTo('landing')" class="w-full md:w-auto px-16 py-6 bg-slate-900 text-white rounded-[2rem] font-black text-xl hover:bg-slate-800 transition-all shadow-2xl hover:scale-105">
-               Torna alla Home
-             </button>
-             <button (click)="startQuiz()" class="w-full md:w-auto px-16 py-6 border-4 border-slate-200 text-slate-400 rounded-[2rem] font-black text-xl hover:bg-white hover:text-blue-600 transition-all">
-               Riprova Test
-             </button>
-          </div>
+        <div class="max-w-2xl mx-auto text-center py-20 space-y-8 animate-in zoom-in-95">
+          <div class="text-7xl">🩺</div>
+          <h2 class="text-5xl font-black tracking-tighter">Test Completato!</h2>
+          <div class="text-3xl font-bold text-blue-600">Punteggio: {{ score() }} / 30</div>
+          <p class="text-slate-500">Ottimo lavoro! La tua comprensione della fluidodinamica medica sta progredendo.</p>
+          <button (click)="navigateTo('landing')" class="px-12 py-5 bg-slate-900 text-white rounded-2xl font-black hover:scale-105 transition-all shadow-2xl">Ricomincia Percorso</button>
         </div>
       }
     </div>
   </main>
 </div>
   `,
-  styles: [`
-    :host { display: block; }
-  `]
+  styles: [`:host { display: block; }`]
 })
 export class AppComponent {
   private gemini = inject(GeminiService);
-
   gameState = signal<'landing' | 'theory' | 'quiz' | 'result'>('landing');
   isSidebarOpen = signal(false);
-
   currentQuestionIndex = signal(0);
   score = signal(0);
   selectedOption = signal<number | null>(null);
   hasAnswered = signal(false);
-  isCorrect = signal(false);
   aiExplanation = signal<string>('');
   loadingAi = signal(false);
-
   questions = signal<Question[]>(QUESTIONS);
   currentQuestion = computed(() => this.questions()[this.currentQuestionIndex()]);
   progress = computed(() => ((this.currentQuestionIndex() + 1) / this.questions().length) * 100);
 
-  toggleSidebar() {
-    this.isSidebarOpen.update(v => !v);
-  }
-
+  toggleSidebar() { this.isSidebarOpen.update(v => !v); }
   navigateTo(state: 'landing' | 'theory' | 'quiz' | 'result') {
-    if (state === 'quiz') {
-      this.resetAnswerState();
-      this.currentQuestionIndex.set(0);
-      this.score.set(0);
-    }
+    if (state === 'quiz') { this.resetQuiz(); }
     this.gameState.set(state);
     this.isSidebarOpen.set(false);
   }
-
   startTheory() { this.navigateTo('theory'); }
   startQuiz() { this.navigateTo('quiz'); }
-
+  resetQuiz() {
+    this.currentQuestionIndex.set(0);
+    this.score.set(0);
+    this.resetAnswerState();
+  }
   async selectOption(index: number) {
     if (this.hasAnswered()) return;
-
     this.selectedOption.set(index);
     this.hasAnswered.set(true);
-    
     const correct = index === this.currentQuestion().correctAnswer;
-    this.isCorrect.set(correct);
-    if (correct) {
-      this.score.update(s => s + 1);
-    }
-
+    if (correct) this.score.update(s => s + 1);
     this.loadingAi.set(true);
-    const expl = await this.gemini.getDetailedExplanation(
+    this.aiExplanation.set(await this.gemini.getDetailedExplanation(
       this.currentQuestion().topic,
       this.currentQuestion().question,
       this.currentQuestion().options[index],
       correct
-    );
-    this.aiExplanation.set(expl);
+    ));
     this.loadingAi.set(false);
   }
-
   nextQuestion() {
     if (this.currentQuestionIndex() < this.questions().length - 1) {
       this.currentQuestionIndex.update(i => i + 1);
@@ -418,7 +252,6 @@ export class AppComponent {
       this.gameState.set('result');
     }
   }
-
   resetAnswerState() {
     this.selectedOption.set(null);
     this.hasAnswered.set(false);

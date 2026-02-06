@@ -4,24 +4,25 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import * as core from '@angular/core';
 import { AppComponent } from './src/app.component.ts';
 
-// Tenta di recuperare la funzione per la modalità Zoneless dal modulo Angular Core.
-// In Angular 18/19+ è stabile, ma in alcune build ESM potrebbe essere ancora sotto il prefisso experimental.
-const coreObj = core as any;
-const provideZoneless = coreObj.provideZonelessChangeDetection || 
-                        coreObj.provideExperimentalZonelessChangeDetection;
+/**
+ * Accediamo a provideZonelessChangeDetection in modo dinamico.
+ * Questo evita il SyntaxError: "Importing binding name not found" che avviene 
+ * quando il bundle ESM del CDN non esporta correttamente il nome statico.
+ */
+const coreAny = core as any;
+const zonelessProviderFunc = coreAny.provideZonelessChangeDetection || 
+                             coreAny.provideExperimentalZonelessChangeDetection;
 
-if (!provideZoneless) {
-  throw new Error("FATAL: Impossibile trovare provideZonelessChangeDetection in @angular/core. L'applicazione richiede Angular 18+.");
+if (!zonelessProviderFunc) {
+  throw new Error("Errore Fatale: provideZonelessChangeDetection non trovato. Verifica la versione di Angular.");
 }
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZoneless()
+    zonelessProviderFunc()
   ]
 }).catch(err => {
-  console.error("Errore durante il bootstrap dell'applicazione:", err);
+  console.error("Errore durante il bootstrap di FluidMed:", err);
 });
-
-// AI Studio entry point
 
 // AI Studio always uses an `index.tsx` file for all project types.
