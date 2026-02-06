@@ -5,24 +5,36 @@ import * as core from '@angular/core';
 import { AppComponent } from './src/app.component.ts';
 
 /**
- * Risolviamo il SyntaxError accedendo dinamicamente al modulo core.
- * Questo è necessario perché alcune distribuzioni ESM non espongono il nome
- * come export statico ma solo come proprietà del namespace.
+ * Funzione di bootstrap sicura per evitare loop e crash silenziosi.
  */
-const coreAny = core as any;
-const provideZoneless = coreAny.provideZonelessChangeDetection || 
-                        coreAny.provideExperimentalZonelessChangeDetection;
+async function startApp() {
+  try {
+    const coreAny = core as any;
+    // Cerchiamo il provider zoneless in tutte le sue possibili nomenclature ESM
+    const zonelessProvider = coreAny.provideZonelessChangeDetection || 
+                             coreAny.provideExperimentalZonelessChangeDetection ||
+                             (core as any)['provideZonelessChangeDetection'];
 
-if (!provideZoneless) {
-  console.error("Critical: provideZonelessChangeDetection non trovato.");
+    const providers = [];
+    if (zonelessProvider) {
+      providers.push(zonelessProvider());
+    } else {
+      console.warn("Zoneless provider non trovato, l'app potrebbe richiedere Zone.js o funzionare in modalità degradata.");
+    }
+
+    await bootstrapApplication(AppComponent, { providers });
+    console.log("FluidMed avviata correttamente.");
+  } catch (error) {
+    console.error("Errore critico durante l'avvio di FluidMed:", error);
+    const loadingText = document.getElementById('loading-text');
+    if (loadingText) {
+      loadingText.innerText = "Errore durante l'avvio. Controlla la console.";
+      loadingText.classList.remove('animate-pulse');
+      loadingText.classList.add('text-red-500');
+    }
+  }
 }
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideZoneless ? provideZoneless() : []
-  ]
-}).catch(err => {
-  console.error("Errore fatale durante il bootstrap dell'app:", err);
-});
+startApp();
 
 // AI Studio always uses an `index.tsx` file for all project types.

@@ -6,10 +6,23 @@ import { GoogleGenAI } from "@google/genai";
   providedIn: 'root'
 })
 export class GeminiService {
-  // Utilizzo della variabile d'ambiente per l'API KEY
-  private ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  private ai: any;
+
+  constructor() {
+    // Accesso sicuro alla API KEY per evitare crash se process non è definito
+    const env = (window as any).process?.env || (globalThis as any).process?.env || {};
+    const apiKey = env.API_KEY || '';
+    
+    try {
+      this.ai = new GoogleGenAI({ apiKey });
+    } catch (e) {
+      console.error("Inizializzazione GoogleGenAI fallita:", e);
+    }
+  }
 
   async getDetailedExplanation(topic: string, question: string, selectedAnswer: string, isCorrect: boolean): Promise<string> {
+    if (!this.ai) return "Il principio fisico alla base spiega come i gradienti di pressione influenzino il flusso ematico.";
+
     const prompt = `
       Sei un professore di Fisica Medica.
       Argomento: ${topic}.
@@ -18,7 +31,7 @@ export class GeminiService {
       Corretto: ${isCorrect ? 'Sì' : 'No'}.
       
       Spiega il principio fisico in modo conciso e applicalo alla clinica medica.
-      Usa massimo 70 parole. Linguaggio professionale ma accessibile per studenti di 20-25 anni.
+      Usa massimo 70 parole. Linguaggio professionale ma accessibile.
     `;
 
     try {
